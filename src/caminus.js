@@ -1,13 +1,11 @@
-var fs = require('fs'),
-  util = require('util')
+import { mkdir,writeFile } from "fs"
+import util from "util"
 
-var root = ""
-if(typeof window !== 'undefined')
-	root = window
-if(typeof global !== 'undefined')
-	root = global
-if(typeof exports !== 'undefined')
-	root = exports
+export defaultOpts= {
+	encoding: "utf8",
+	dirMode: 0750,
+	fileMode: 0640
+} 
 
 /**
  * @name caminus
@@ -17,23 +15,11 @@ if(typeof exports !== 'undefined')
  * @param callback callback(err,ok)
  * @author <a href="http://voodoowarez.com/rektide">rektide</a> &lt;<a href="mailto:rektide@voodoowarez.com">rektide@voodoowarez.com</a>&gt;
  */
-var caminus = root.caminus = function(o, dir, callback) {
-	// insure context
-
-	if(!(this instanceof caminus))	
-		return new caminus(o,dir)
-
-	this.callback = callback || function(){}
-	this.encoding = 'utf8'
-	this.dirMode = 0750
-	this.mode = 0640
-	this.errs = []
-	this.ref = 0
-
-	this.dumpObject(o,dir)
-}
-caminus.prototype.dumpObject = function(o,dir) {
-	if(this.errs.length) return
+export async function serialize( o, baseDir, opts){
+	opts= opts|| defaultOpts
+	
+		}).call(this,o[i],dir+"/"+i)
+	
 	for(var i in o) {
 		++this.ref;
 		(function(obj,path){
