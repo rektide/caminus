@@ -1,0 +1,30 @@
+{
+	"name": "caminus",
+	"version": "1.0.0",
+	"description": "Caminus JsonForge fires simple JS objects into a file system representation",
+	"main": "caminus.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://archive.voodoowarez.com/caminus.git"
+	},
+	"keywords": [
+		"xplan",
+		"everything-is-a-file"
+	],
+	"author": "rektide de la faye",
+	"license": "MIT",
+	"homepage": "https://archive.voodoowarez.com/caminus",
+	"module": "caminus.js",
+	"esm": true,
+	"@std/esm": {
+		"cjs": {
+			"namedExports": true
+		}
+	},
+	"devDependencies": {
+		"esm": "^3.0.48"
+	}
+}

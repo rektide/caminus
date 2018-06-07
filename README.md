@@ -1,4 +1,4 @@
 Caminus JsonForge
 =================
 
-JsonForge fires compliant JSON into a file system representation.
+> JsonForge fires simple JS objects into a file system representation.
