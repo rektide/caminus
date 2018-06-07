@@ -1,67 +1,46 @@
-import { mkdir,writeFile } from "fs"
-import util from "util"
+import deferrant from "deferrant"
+import { mkdir as Mkdir, writeFile as WriteFile} from "fs"
+import { sep } from "path"
+import { promisify } from "util"
 
-export defaultOpts= {
-	encoding: "utf8",
+/**
+ * Default flyweight object
+ * Alternative options must satisfy this contract
+ */
+export let defaultOpts= {
+	writeOptions: {
+		encoding: "utf8",
+		mode: 0640
+	},
 	dirMode: 0750,
-	fileMode: 0640
+	mkdir: promisify( Mkdir),
+	writeFile: promisify( WriteFile),
+	serialize // used recursively by serialize
 } 
 
 /**
  * @name caminus
  * @description export json objects to the filesystem
  * @param o object to write to fs
- * @param dir root directory path for fs
- * @param callback callback(err,ok)
+ * @param baseDir root directory path for fs
+ * @param opts options to execute with
  * @author <a href="http://voodoowarez.com/rektide">rektide</a> &lt;<a href="mailto:rektide@voodoowarez.com">rektide@voodoowarez.com</a>&gt;
  */
-export async function serialize( o, baseDir, opts){
+export function serialize( o, baseDir, opts){
 	opts= opts|| defaultOpts
-	
-		}).call(this,o[i],dir+"/"+i)
-	
-	for(var i in o) {
-		++this.ref;
-		(function(obj,path){
-			var self = this
-			console.log("entering",util.inspect(arguments))
-			if(typeof obj == "object") {
-				// make directory
-				fs.mkdir(path,this.dirMode,function(err) {
-					console.log("path-o "+path,util.inspect(arguments))
-					if(err && err['errno'] != 17) return self.throwError("error creating directory "+path,err)
-					if(self.errs.length) return
-					// write object
-					self.dumpObject(obj,path)
-					self.ref--
-				})
-			}
-			else {
-				// prepare value entry
-				fs.open(path,'w',this.mode,function(err,fd){
-					if(err) return self.open("error openning file "+path,err)
-					if(self.errs.length) return
-					// write value
-					var buf = new Buffer(obj.toString(), encoding=self.encoding)
-					console.log("path-d",path,buf.toString(),util.inspect(arguments))
-					fs.write(fd,buf,0,buf.length,null,function(err,written) {
-						console.log("path-w",path,util.inspect(arguments))
-						if(err) self.throwException("error writing file "+path,err)
-						if(isNaN(written) || written < buf.length) return self.throwException("write of unexpected size: "+written+" instead of "+buf.length)
-						self.ref--
-					})
-				})
-			}
-		}).call(this,o[i],dir+"/"+i)
+	if( !baseDir.endsWith( sep)){
+		baseDir= baseDir+ sep
 	}
-}
-caminus.prototype.throwError = function(msg,err) {
-	--this.refDecl
-	var l = this.errs.push(err)
-	if(l == 1)
-		this.callback(msg+": "+err)
-}
-caminus.prototype.refDecl = function() {
-	if(!--this.ref)
-		this.callback(null,true)
+	const allDone= Object.entries( o).map(async function([ prop, val]){
+		const
+		  valType= typeof( val)
+		  propPath= baseDir+ prop
+		if( valType=== "object"){
+			await opts.mkdir( propPath, opts.dirMode)
+			return opts.serialize( val, propPath, opts)
+		}else{
+			return opts.writeFile( propPath, val, opts.writeOptions)
+		}
+	})
+	return Promise.all( allDone)
 }
