@@ -1,4 +1,3 @@
-import deferrant from "deferrant"
 import { mkdir as Mkdir, writeFile as WriteFile} from "fs"
 import { sep } from "path"
 import { promisify } from "util"
@@ -10,9 +9,9 @@ import { promisify } from "util"
 export let defaultOpts= {
 	writeOptions: {
 		encoding: "utf8",
-		mode: 0640
+		mode: 0o640
 	},
-	dirMode: 0750,
+	dirMode: 0o750,
 	mkdir: promisify( Mkdir),
 	writeFile: promisify( WriteFile),
 	serialize // used recursively by serialize
@@ -33,7 +32,7 @@ export function serialize( o, baseDir, opts){
 	}
 	const allDone= Object.entries( o).map(async function([ prop, val]){
 		const
-		  valType= typeof( val)
+		  valType= typeof( val),
 		  propPath= baseDir+ prop
 		if( valType=== "object"){
 			await opts.mkdir( propPath, opts.dirMode)
