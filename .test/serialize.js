@@ -1,21 +1,20 @@
 import {
 	mkdir as Mkdir,
-	readFile as ReadFile,
-	rmdir as Rmdir} from "fs"
+	readFile as ReadFile } from "fs"
 import { sep} from "path"
 import tape from "tape"
 import { promisify} from "util"
+import Rimraf from "rimraf"
 import { serialize} from ".."
-import cleanup from "./util/cleanup"
 
 const
   mkdir= promisify( Mkdir),
   readFile= promisify( ReadFile),
-  rmdir= promisify( Rmdir),
+  rimraf= promisify( Rimraf),
   dir= __dirname+ "/output"
 
-tape("serialize a simple object", async function(t){
-	await rmdir( dir)
+tape.only("serialize a simple object", async function(t){
+	await rimraf( dir)
 	await mkdir( dir)
 	const data= {
 		person: "reg nullify",
@@ -27,7 +26,7 @@ tape("serialize a simple object", async function(t){
 	  band: await readFile( dir+ sep+ "band", "utf8")
 	}
 	t.deepEquals( read, data, "object read back ok")
-	await rmdir(dir)
+	//await rimraf(dir)
 	t.end()
 })
 
