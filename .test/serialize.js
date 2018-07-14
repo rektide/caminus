@@ -1,45 +1,54 @@
-import {
-	mkdir as Mkdir,
-	readFile as ReadFile } from "fs"
 import { sep} from "path"
 import tape from "tape"
 import { promisify} from "util"
-import Rimraf from "rimraf"
+import { rimraf, readFile} from "./util/fs"
+import { output} from "./util/config"
+import { mkdir} from "../util/fs"
 import { serialize} from ".."
 
-const
-  mkdir= promisify( Mkdir),
-  readFile= promisify( ReadFile),
-  rimraf= promisify( Rimraf),
-  dir= __dirname+ sep+ "output"+ sep
-
 tape("serialize-object", async function(t){
-	const testDir= dir+ "serialize-object"
+	// setup
+	const testDir= output+ "serialize-object"
 	await rimraf( testDir)
+
+	// serialize sample data
 	const data= {
 		person: "reg nullify",
 		band: "Cataclysmic Combo"
 	}
 	await serialize( testDir, data)
-	const read= {
-	  person: await readFile( testDir+ sep+ "person", "utf8"),
-	  band: await readFile( testDir+ sep+ "band", "utf8")
-	}
+
+	// read contents back
+	const
+	  fileReads= [
+		readFile( testDir+ sep+ "person", "utf8"),
+		readFile( testDir+ sep+ "band", "utf8"),
+	  ],
+	  [ person, band]= await Promise.all(fileReads),
+	  read= { person, band}
 	t.deepEquals( read, data, "object read back ok")
 	t.end()
 })
 
 tape("serialize-array", async function(t){
-	const testDir= dir+ "serialize-array"
+	// setup
+	const testDir= output+ "serialize-array"
 	await rimraf( testDir)
-	await mkdir( testDir)
-	const data= [ "old",, "thrashbag"
-	]
+
+	// serialize
+	const data= [ "old",, "thrashbag"]
 	await serialize( testDir, data)
-	const read= {
-	  0: await readFile( testDir+ sep+ "0", "utf8"),
-	  2: await readFile( testDir+ sep+ "2", "utf8")
-	}
+
+	// read contents back
+	const
+	  fileReads= [
+		readFile( testDir+ sep+ "0", "utf8"),
+		readFile( testDir+ sep+ "2", "utf8"),
+		readFile( testDir+ sep+ ".array", "utf8")
+	  ],
+	  [ zero, two, dotArray]= await Promise.all(fileReads),
+	  read= [ zero,, two]
+	t.equal( dotArray, "1", "object is array")
 	t.deepEquals( read, data, "object read back ok")
 	t.end()
 })
