@@ -1,10 +1,10 @@
 import { sep} from "path"
 import tape from "tape"
 import { promisify} from "util"
-import { rimraf, readFile} from "./util/fs"
 import { output} from "./util/config"
-import { mkdir} from "../util/fs"
+import { readFile} from "./util/fs"
 import { serialize} from ".."
+import { mkdir, rimraf} from "../util/fs"
 
 tape("serialize-object", async function(t){
 	// setup

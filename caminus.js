@@ -1,5 +1,7 @@
-import { mkdir, writeFile} from "./util/fs"
 import { sep } from "path"
+import pullAll from "lodash.pullall"
+import { getDir, writeFile, rimraf} from "./util/fs"
+import { mapInPlace} from "./util/collection"
 
 const writePrimitive= writeFile
 
@@ -19,9 +21,10 @@ export let defaultOptions= Object.freeze({
   	mode: 0o640
   },
   dirMode: 0o750,
-  mkdir,
+  getDir,
   writePrimitive,
   recordType,
+  rmdir: rimraf,
   serialize // used recursively by serialize
 })
 
@@ -50,8 +53,12 @@ export async function serialize( dir, val, opts){
 	}
 	// else this is a complex object
 
-	// wait for directory to get created
-	await opts.mkdir( dir, opts.dirMode)
+	// build dir
+	const
+	  // grab state -- we're about to go async, but we'll be using this snapshot
+	  entries= Object.entries( val),
+	  // wait for dir to be created or get contents
+	  existingFiles= await opts.getDir( dir, opts.dirMode)
 	if( !dir.endsWith( sep)){
 		dir= dir+ sep
 	}
@@ -59,15 +66,23 @@ export async function serialize( dir, val, opts){
 	// iterate through entries & serialize them all
 	const
 	  recurse= ([ prop, val])=> opts.serialize( dir+ prop, val, opts),
-	  allDone= Object.entries( val).map( recurse)
+	  allDone= entries.map( recurse)
 
 	// record any special-ness of this object
      const recordType= opts.recordType( dir, val, opts)
-	if( recordType){
-		allDone.push( recordType)
-	}
 
-	// TODO: cleanup no longer existing entries!
+	// delete any stray files we had about
+	// warning: extreme in-place mutation of data structures throughout
+	// downconvert entries to keys
+	mapInPlace( entries, ([ key])=> key)
+	// remove any entries on val that were in the dir
+	pullAll( existingFiles, entries)
+	// remove stray files
+	mapInPlace( existingFiles, opts.rmdir)
+	const removals = existingFiles
+
+	// wait for everything
+	allDone.push( recordType, ...removals)
 
 	return Promise.all( allDone)
 }

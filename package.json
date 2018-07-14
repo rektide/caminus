@@ -27,5 +27,8 @@
 	"devDependencies": {
 		"esm": "^3.0.48",
 		"tape": "^4.9.1"
+	},
+	"dependencies": {
+		"lodash.pullall": "^4.2.0"
 	}
 }
