@@ -1,9 +1,9 @@
 import Rimraf from "rimraf"
-import { sep} from "path"
 import { promisify} from "util"
+import { output} from "./config"
 
 const rimraf= promisify( Rimraf)
 
 export default async function(){
-	return rimraf( __dirname + sep + "output")
+	return rimraf( output)
 }

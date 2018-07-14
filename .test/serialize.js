@@ -16,12 +16,11 @@ const
 tape("serialize-object", async function(t){
 	const testDir= dir+ "serialize-object"
 	await rimraf( testDir)
-	await mkdir( testDir)
 	const data= {
 		person: "reg nullify",
 		band: "Cataclysmic Combo"
 	}
-	await serialize( data, testDir)
+	await serialize( testDir, data)
 	const read= {
 	  person: await readFile( testDir+ sep+ "person", "utf8"),
 	  band: await readFile( testDir+ sep+ "band", "utf8")
@@ -36,7 +35,7 @@ tape("serialize-array", async function(t){
 	await mkdir( testDir)
 	const data= [ "old",, "thrashbag"
 	]
-	await serialize( data, testDir)
+	await serialize( testDir, data)
 	const read= {
 	  0: await readFile( testDir+ sep+ "0", "utf8"),
 	  2: await readFile( testDir+ sep+ "2", "utf8")
