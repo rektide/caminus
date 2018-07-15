@@ -1,9 +1,6 @@
 import { sep} from "path"
-import { readFile as ReadFile} from "fs"
-import { readdir} from "../../util/fs"
-import { promisify} from "util"
-
-export const readFile= promisify( ReadFile)
+import readdir from "../../fs/readdir"
+import readFile from "../../fs/readFile"
 
 export async function readFiles( dir){
 	return readdir( dir).then( function(files){

@@ -1,38 +1,6 @@
 import { sep } from "path"
 import pullAll from "lodash.pullall"
-import { getDir, writeFile, rimraf} from "./util/fs"
 import { mapInPlace} from "./util/collection"
-
-const writePrimitive= writeFile
-
-async function recordType( path, val, opts){
-	if( Array.isArray(val)){
-		const dotArrayPath= path+ sep+ ".array"
-		return opts.writePrimitive( dotArrayPath, 1, opts.writeOptions)
-	}
-}
-
-/**
- * Sealed copy of the default flyweight object
- */
-export let defaultOptions= Object.freeze({
-  writeOptions: {
-  	encoding: "utf8",
-  	mode: 0o640
-  },
-  dirMode: 0o750,
-  getDir,
-  writePrimitive,
-  recordType,
-  rmdir: rimraf,
-  serialize // used recursively by serialize
-})
-
-/**
- * Default flyweight object if none is provided
- * Alternative options must satisfy this contract
- */
-export let options= { ...defaultOptions}
 
 /**
  * @name caminus
@@ -43,7 +11,10 @@ export let options= { ...defaultOptions}
  * @author <a href="http://voodoowarez.com/rektide">rektide</a> &lt;<a href="mailto:rektide@voodoowarez.com">rektide@voodoowarez.com</a>&gt;
  */
 export async function serialize( dir, val, opts){
-	opts= opts|| defaultOptions
+	if( !opts){
+		const defaultsModule= await import( "./serialize/defaults")
+		opts= await defaultsModule.default()
+	}
 
 	// if primitive,
 	const valType= typeof( val)
@@ -87,3 +58,4 @@ export async function serialize( dir, val, opts){
 
 	return Promise.all( allDone)
 }
+export default serialize

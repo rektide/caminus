@@ -1,5 +1,5 @@
 import { mkdirSync} from "fs"
-import { existsOk} from "../../util/fs"
+import existsOk from "../../fs/existsOk"
 import { output} from "./config"
 
 try{
