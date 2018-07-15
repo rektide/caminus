@@ -21,17 +21,12 @@ export function existsOk( err){
 * Return the list of files in a directory, creating the directory if needed
 */
 export async function getDir( dir){
-	return mkdir(dir).then(
-		async function(){
+	return mkdir(dir).catch(function( err){
+		if( err.code=== "EEXIST"){
 			return readdir( dir)
-		},
-		function( err){
-			if( err.code=== "EEXIST"){
-				return []
-			}
-			throw err
 		}
-	)
+		throw err
+	})
 }
 
 export const writeFile= promisify( WriteFile)

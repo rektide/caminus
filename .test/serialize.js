@@ -2,9 +2,9 @@ import { sep} from "path"
 import tape from "tape"
 import { promisify} from "util"
 import { output} from "./util/config"
-import { readFile} from "./util/fs"
+import { readFiles} from "./util/fs"
 import { serialize} from ".."
-import { mkdir, rimraf} from "../util/fs"
+import { mkdir, rimraf, writeFile} from "../util/fs"
 
 tape("serialize-object", async function(t){
 	// setup
@@ -19,14 +19,8 @@ tape("serialize-object", async function(t){
 	await serialize( testDir, data)
 
 	// read contents back
-	const
-	  fileReads= [
-		readFile( testDir+ sep+ "person", "utf8"),
-		readFile( testDir+ sep+ "band", "utf8"),
-	  ],
-	  [ person, band]= await Promise.all(fileReads),
-	  read= { person, band}
-	t.deepEquals( read, data, "object read back ok")
+	const reads= await readFiles( testDir)
+	t.deepEquals( reads, data, "object read back ok")
 	t.end()
 })
 
@@ -41,17 +35,33 @@ tape("serialize-array", async function(t){
 
 	// read contents back
 	const
-	  fileReads= [
-		readFile( testDir+ sep+ "0", "utf8"),
-		readFile( testDir+ sep+ "2", "utf8"),
-		readFile( testDir+ sep+ ".array", "utf8")
-	  ],
-	  [ zero, two, dotArray]= await Promise.all(fileReads),
-	  read= [ zero,, two]
-	t.equal( dotArray, "1", "object is array")
-	t.deepEquals( read, data, "object read back ok")
+	  reads= await readFiles( testDir),
+	  isArray= reads[".array"]
+	delete reads[".array"]
+	t.equals( isArray, "1", "is array")
+	t.deepEquals( reads, data, "object read back ok")
 	t.end()
 })
+
+tape("stray-files", async function(t){
+	// setup
+	const testDir= output+ "stray-files"
+	await rimraf( testDir)
+	// "stray" file
+	await mkdir( testDir)
+	await writeFile( testDir+ sep+ "stray", "rm yoself")
+
+	// serialize + add stray file
+	const data= {person: "randon dent", parent: "arthur dent"}
+	await serialize( testDir, data)
+
+	// read contents back
+	const reads= await readFiles( testDir)
+	t.deepEquals( reads, data, "object read back ok")
+	t.end()
+})
+
+
 
 tape("serialize something deep", function(t){
 	t.end()

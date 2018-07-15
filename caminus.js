@@ -72,17 +72,18 @@ export async function serialize( dir, val, opts){
      const recordType= opts.recordType( dir, val, opts)
 
 	// delete any stray files we had about
-	// warning: extreme in-place mutation of data structures throughout
-	// downconvert entries to keys
-	mapInPlace( entries, ([ key])=> key)
-	// remove any entries on val that were in the dir
-	pullAll( existingFiles, entries)
-	// remove stray files
-	mapInPlace( existingFiles, opts.rmdir)
-	const removals = existingFiles
+	if( existingFiles){
+		// warning: extreme in-place mutation of data structures throughout
+		// downconvert entries to keys
+		mapInPlace( entries, ([ key])=> key)
+		// remove any entries on val that were in the dir
+		pullAll( existingFiles, entries)
+		// remove stray files
+		mapInPlace( existingFiles, f=> opts.rmdir( dir+ sep+ f))
+	}
 
 	// wait for everything
-	allDone.push( recordType, ...removals)
+	allDone.push( recordType, ...(existingFiles|| []))
 
 	return Promise.all( allDone)
 }
