@@ -6,14 +6,17 @@ import stat from "../fs/stat.js"
 import readdir from "../fs/readdir.js"
 
 import isPrimitive from "./isPrimitive.js"
+import readPrimitive from "./readPrimitive.js"
 import resolveName from "./resolveName.js"
 
 /**
  * Sealed copy of the default flyweight object
  */
 export const defaults= Object.freeze({
+  cleanup: true,
   stat: ({path})=> stat(path)
   isPrimitive,
+  readPrimitive,
   readdir: ({path})=> readdir(path)
   arrayCheck: o=> o&& o.length!== undefined,
   makeArray: ()=> [],

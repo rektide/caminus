@@ -5,23 +5,24 @@ export async function deserialize( path, val, options){
 		const defaultModule= await import( "./deserialize/defaults")
 	}
 
+
 	// flyweight context passed through to all helpers
-	const deserialization= { path, val, options}
+	const stat= opts.stat({ path})
 
 	// handle primitives
-	deserialization.stat= opts.stat({ path})
-	if( opts.isPrimitive( deserialiation)){
+	if( opts.isPrimitive({ stat})){
 		return opts.readPrimitive( deserialization)
 	}
 
 	// get top contents
 	const readdir= opts.readdir( deserialization)
+	// i would write to opts here but it gets passed everywhere & would get stomped
 
 	// check for array-ness/other types
 	const typeIndex= readdir.indexOf("@type")
 	if( typeIndex!== -1){
 		deserialiation.type= readdir( typeIndex)
-		if( deserialization.type=== "xsd:array" && !opts.arrayCheck( val)){
+		if( deserialization.type=== "@collection" && !opts.arrayCheck( val)){ // todo jsonld
 			val= opts.makeArray()
 		}
 	}
@@ -34,12 +35,13 @@ export async function deserialize( path, val, options){
 		path= path+ sep
 	}
 
+
 	const
 	  deserializer= async filename=> {
 		const
 		  entry= opts.resolveName( filename),
 		  childPath= path+ entry,
-		  child= await opts.deserialize( childPath, null, opts))
+		  child= await opts.deserialize( childPath, null, opts)
 		val[ entry]= child
 	  },
 	  deserialized= readdir.map( deserializer)
