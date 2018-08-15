@@ -13,7 +13,25 @@ export function deserialize( path, val, options){
 		return opts.readPrimitive( deserialization)
 	}
 
-	const ctx= Deferrant()
+	const ctx= ContextRunner(null, {
+		stat: opts.stat,
+		files: opts.files,
+		readdir: opts.readdir,
+		val: [],
+		_type: ctx=> {
+			// check for array-ness/other types
+			const typeIndex= ctx.readdir.indexOf( ".@type")
+			if( typeIndex!== -1){
+				deserialiation.type= readdir( typeIndex)
+				if( deserialization.type=== "@collection" && !opts.arrayCheck( val)){ // todo jsonld
+					val= opts.makeArray()
+				}
+			}
+
+
+		}
+	})
+	
 	ctx.stat= stat
 	ctx.files= opts.files( ctx)
 
@@ -21,14 +39,6 @@ export function deserialize( path, val, options){
 	ctx.readdir= opts.readdir( ctx)
 	// i would write to opts here but it gets passed everywhere & would get stomped
 
-	// check for array-ness/other types
-	const typeIndex= readdir.indexOf(".@type")
-	if( typeIndex!== -1){
-		deserialiation.type= readdir( typeIndex)
-		if( deserialization.type=== "@collection" && !opts.arrayCheck( val)){ // todo jsonld
-			val= opts.makeArray()
-		}
-	}
 	if( !val){
 		val= {}
 	}
