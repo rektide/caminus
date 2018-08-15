@@ -1,25 +1,28 @@
 import { sep } from "path"
+import Deferrant from "deferrant"
 
-export async function deserialize( path, val, options){
+export function deserialize( path, val, options){
 	if( !opts){
 		const defaultModule= await import( "./deserialize/defaults")
 	}
 
-
 	// flyweight context passed through to all helpers
 	const stat= opts.stat({ path})
-
 	// handle primitives
 	if( opts.isPrimitive({ stat})){
 		return opts.readPrimitive( deserialization)
 	}
 
+	const ctx= Deferrant()
+	ctx.stat= stat
+	ctx.files= opts.files( ctx)
+
 	// get top contents
-	const readdir= opts.readdir( deserialization)
+	ctx.readdir= opts.readdir( ctx)
 	// i would write to opts here but it gets passed everywhere & would get stomped
 
 	// check for array-ness/other types
-	const typeIndex= readdir.indexOf("@type")
+	const typeIndex= readdir.indexOf(".@type")
 	if( typeIndex!== -1){
 		deserialiation.type= readdir( typeIndex)
 		if( deserialization.type=== "@collection" && !opts.arrayCheck( val)){ // todo jsonld

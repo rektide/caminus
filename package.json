@@ -29,6 +29,7 @@
 		"tape": "^4.9.1"
 	},
 	"dependencies": {
+		"deferrant": "^1.2.0",
 		"lodash.pullall": "^4.2.0"
 	}
 }
