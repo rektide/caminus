@@ -1,7 +1,7 @@
 import { sep } from "path"
 import Deferrant from "deferrant"
 
-export function deserialize( path, val, options){
+export async function deserialize( path, val, options){
 	if( !opts){
 		const defaultModule= await import( "./deserialize/defaults")
 	}
@@ -48,7 +48,7 @@ export function deserialize( path, val, options){
 	//}
 
 
-	await ctx
+	await ctx // it is itself but resolved
 	const
 	  deserializer= async filename=> {
 		const
@@ -57,7 +57,7 @@ export function deserialize( path, val, options){
 		  child= await opts.deserialize( childPath, null, opts)
 		val[ entry]= child
 	  },
-	  deserialized= readdir.map( deserializer),
+	  deserialized= readdir.map( deserializer)
 	await Promise.all(deserialized)
 
 	//return val
