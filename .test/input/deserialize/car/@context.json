@@ -1,0 +1,7 @@
+{
+	"@context": {
+		"car": "http://example.com/deserialize/car#",
+		"wheel": "http/example.com/deserialize/car/wheel#",
+		"wear": "http://example.com/deserialize/car/wheel#wear"
+	}
+}
