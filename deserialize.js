@@ -17,8 +17,8 @@ export function deserialize( path, val, options){
 		stat: opts.stat,
 		files: opts.files,
 		readdir: opts.readdir,
-		val: [],
-		_type: ctx=> {
+		val: {},
+		"@type": ctx=> {
 			// check for array-ness/other types
 			const typeIndex= ctx.readdir.indexOf( ".@type")
 			if( typeIndex!== -1){
@@ -27,28 +27,28 @@ export function deserialize( path, val, options){
 					val= opts.makeArray()
 				}
 			}
-
-
 		}
 	})
 	
-	ctx.stat= stat
-	ctx.files= opts.files( ctx)
+	//ctx.stat= stat
+	//ctx.files= opts.files( ctx)
 
 	// get top contents
-	ctx.readdir= opts.readdir( ctx)
+	//ctx.readdir= opts.readdir( ctx)
 	// i would write to opts here but it gets passed everywhere & would get stomped
+	// update on previous: everything is now a context
 
-	if( !val){
-		val= {}
-	}
-
-
-	if( !path.endsWith( sep)){
-		path= path+ sep
-	}
+	//if( !val){
+	//	val= {}
+	//}
 
 
+	//if( !path.endsWith( sep)){
+	//	path= path+ sep
+	//}
+
+
+	await ctx
 	const
 	  deserializer= async filename=> {
 		const
@@ -57,9 +57,11 @@ export function deserialize( path, val, options){
 		  child= await opts.deserialize( childPath, null, opts)
 		val[ entry]= child
 	  },
-	  deserialized= readdir.map( deserializer)
+	  deserialized= readdir.map( deserializer),
+	await Promise.all(deserialized)
 
-	return val
+	//return val
+	return ctx
 }
 
 export default deserialize
