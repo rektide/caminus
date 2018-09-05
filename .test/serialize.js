@@ -40,9 +40,9 @@ tape("serialize-array", async function(t){
 	// read contents back
 	const
 	  reads= await readFiles( testDir),
-	  isArray= reads[".array"]
-	delete reads[".array"]
-	t.equals( isArray, "1", "is array")
+	  isArray= reads[ "@type"]
+	delete reads[ "@type"]
+	t.equals( isArray, "@collection", "is '@collection' aka an array")
 	t.deepEquals( reads, data, "object read back ok")
 	t.end()
 })
@@ -64,8 +64,6 @@ tape("stray-files", async function(t){
 	t.deepEquals( reads, data, "object read back ok")
 	t.end()
 })
-
-
 
 tape("serialize something deep", function(t){
 	t.end()
