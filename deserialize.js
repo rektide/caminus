@@ -1,67 +1,67 @@
 import { sep } from "path"
-import Deferrant from "deferrant"
+import Deferrant from "deferrant/deferrant.js"
 
-export async function deserialize( path, val, options){
+let defaults
+
+export async function deserialize( path, val, opts){
+	//console.log("running", {path,val})
+	if( val&& !opts){
+		opts= val
+		val= null
+	}
 	if( !opts){
-		const defaultModule= await import( "./deserialize/defaults")
+		if( !defaults){
+			// bit of a race if multiple callers get here but they
+			// ought all resolve the same module
+			defaults= (await import( "./deserialize/defaults")).default
+		}
+		opts= defaults()
 	}
 
 	// flyweight context passed through to all helpers
-	const stat= opts.stat({ path})
+	const stat= await opts.stat( path)
 	// handle primitives
-	if( opts.isPrimitive({ stat})){
-		return opts.readPrimitive( deserialization)
+	if( opts.isPrimitive( stat)){
+		return opts.readPrimitive( path)
 	}
 
-	const ctx= ContextRunner(null, {
-		stat: opts.stat,
-		files: opts.files,
-		readdir: opts.readdir,
-		val: {},
-		"@type": ctx=> {
-			// check for array-ness/other types
-			const typeIndex= ctx.readdir.indexOf( ".@type")
-			if( typeIndex!== -1){
-				deserialiation.type= readdir( typeIndex)
-				if( deserialization.type=== "@collection" && !opts.arrayCheck( val)){ // todo jsonld
-					val= opts.makeArray()
-				}
+	// get top contents
+	const files= await opts.readdir( path)
+
+	// create our value
+	const
+	  type= files.indexOf("@type"),
+	  isArray= type=== "@collection"
+	if( val=== undefined){
+		if( isArray){
+			val= []
+		}else{
+			val= {}
+		}
+	}else{
+		const haveArray= opts.arrayCheck( val)
+		if( isArray){
+			if( !haveArray){
+				throw new Error("Expected `val` array")
+			}
+		}else{
+			if( haveArray){
+				throw new Error("Expected `val` object")
 			}
 		}
-	})
-	
-	//ctx.stat= stat
-	//ctx.files= opts.files( ctx)
+	}
 
-	// get top contents
-	//ctx.readdir= opts.readdir( ctx)
-	// i would write to opts here but it gets passed everywhere & would get stomped
-	// update on previous: everything is now a context
-
-	//if( !val){
-	//	val= {}
-	//}
-
-
-	//if( !path.endsWith( sep)){
-	//	path= path+ sep
-	//}
-
-
-	await ctx // it is itself but resolved
-	const
-	  deserializer= async filename=> {
+	path= path+ sep
+	async function deserializer( file){
 		const
-		  entry= opts.resolveName( filename),
+		  entry= opts.resolveName( file),
 		  childPath= path+ entry,
-		  child= await opts.deserialize( childPath, null, opts)
+		  child= await opts.deserialize( childPath, undefined, opts)
 		val[ entry]= child
-	  },
-	  deserialized= readdir.map( deserializer)
-	await Promise.all(deserialized)
+	}
+	const deserialized= files.map( deserializer)
+	await Promise.all( deserialized)
 
-	//return val
-	return ctx
+	return val
 }
-
 export default deserialize

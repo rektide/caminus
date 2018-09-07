@@ -1,8 +1,8 @@
 import readFile from "../fs/readFile"
 
-export async function readPrimitive({ path}){
+export async function readPrimitive( path){
 	const
-	  content= async readFile( path, "utf8"),
+	  content= await readFile( path, "utf8"),
 	  floatContent= Number.parseFloat( content)
 	if( floatContent) {
 		const intContent= Number.parseInt( content)

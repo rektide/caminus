@@ -1,5 +1,6 @@
-import deserialize from "../deserialize"
+import tape from "tape"
 
+import deserialize from "../deserialize"
 import { input} from "./util/config"
 
 tape("deserialize car", async function(t){

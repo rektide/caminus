@@ -1,7 +1,4 @@
-//import getDir from "../fs/getDir"
-//import rimraf from "../fs/rimraf"
-//import writeFile from "../fs/writeFile"
-
+import deserialize from "../deserialize.js"
 import stat from "../fs/stat.js"
 import readdir from "../fs/readdir.js"
 
@@ -14,13 +11,13 @@ import resolveName from "./resolveName.js"
  */
 export const defaults= Object.freeze({
   cleanup: true,
-  stat: ({path})=> stat(path)
+  stat,
   isPrimitive,
   readPrimitive,
-  readdir: ({path})=> readdir(path)
+  readdir,
   arrayCheck: o=> o&& o.length!== undefined,
-  makeArray: ()=> [],
   resolveName,
+  deserialize
 
 /*
   writeOptions: {
