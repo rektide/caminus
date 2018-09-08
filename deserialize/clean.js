@@ -1,5 +1,5 @@
 export function clean( o, key){
-	o[ key]= null
+	o[ key]= undefined
 	return o
 }
 export default clean

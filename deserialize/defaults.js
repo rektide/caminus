@@ -20,22 +20,9 @@ export const defaults= Object.freeze({
   resolveName,
   clean,
   deserialize,
-
-/*
-  writeOptions: {
-  	encoding: "utf8",
-  	mode: 0o640
-  },
-  dirMode: 0o750,
-  getDir,
-  writePrimitive: writeFile,
-  recordType,
-  rmdir: rimraf,
-  serialize // used recursively by serialize
-*/
 })
-export function defaultsFactory(){
-	return { ...defaults}
+export function defaultsFactory( props){
+	return { ...defaults, ...props}
 }
 
 let currentDefaults= defaultsFactory()

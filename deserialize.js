@@ -8,10 +8,6 @@ function drop( key){
 }
 
 export async function deserialize( path, val, opts){
-	if( val&& opts=== undefined){
-		opts= val
-		val= undefined
-	}
 	if( !opts){
 		if( !defaults){
 			// bit of a race if multiple callers get here but they
@@ -51,7 +47,7 @@ export async function deserialize( path, val, opts){
 	  hadVal= val!== undefined,
 	  hadKeys= hadVal&& opts.cleanup&& Object.keys( val),
 	  // as we iterate we're going to remote keys we see, leaving only dangling keys we need to clean-up
-	  dirtyKeys= hadKeys&& hadKeys.length&& new Set(...hadKeys),
+	  dirtyKeys= hadKeys&& hadKeys.length&& new Set( hadKeys),
 
 	  // deserialize each entry
 	  _values= files.map( deserializer),
@@ -80,16 +76,20 @@ export async function deserialize( path, val, opts){
 		}
 	}
 
-	// remove
-	if( dirtyKeys){
-		// these keys remain from the original `val`, but weren't seen during deser & thus need to be cleaned off
-		dirtyKeys.forEach( drop, val)
+	if( opts.pre){
+		opts.pre( keys, values)
 	}
-
-	// read values
+	// assign key/values
 	for( let i= 0; i< keys.length; ++i){
 		const key= keys[ i]
 		val[ key]= values[ i]
+	}
+
+	// remove left over properties
+	if( dirtyKeys){
+		// these keys remain from the original `val`, but weren't seen during deser & thus need to be cleaned off
+		dirtyKeys.forEach( drop, val)
+		// TODO: try to fix length if isArray
 	}
 
 	// good good

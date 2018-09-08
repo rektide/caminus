@@ -20,8 +20,8 @@ export const defaults= Object.freeze({
   rmdir: rimraf,
   serialize // used recursively by serialize
 })
-export function defaultsFactory(){
-	return { ...defaults}
+export function defaultsFactory( props){
+	return { ...defaults, ...props}
 }
 
 let currentDefaults= defaultsFactory()
