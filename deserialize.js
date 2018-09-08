@@ -4,7 +4,6 @@ import Deferrant from "deferrant/deferrant.js"
 let defaults
 
 export async function deserialize( path, val, opts){
-	//console.log("running", {path,val})
 	if( val&& !opts){
 		opts= val
 		val= null
@@ -44,8 +43,8 @@ export async function deserialize( path, val, opts){
 
 	// marshal val into the right state start, now that we know @type
 	const
-	  type= typeIndex!== undefined&& _values[ typeIndex],
-	  isArray= type=== "@collection"
+	  type= typeIndex!== undefined&& values[ typeIndex],
+	  isArray= type&& type.trim()=== "@collection"
 	if( val=== undefined){
 		if( isArray){
 			val= []
