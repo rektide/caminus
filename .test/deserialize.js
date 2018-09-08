@@ -10,6 +10,6 @@ tape("deserialize car", async function(t){
 	const car= await deserialize( carDir)
 	t.equal( car.wheel.length, 4, "has four wheels")
 	t.equal( car.wheel["@type"].trim(), "@collection", "is an array")
-	t.equal( car.engine, "600V 2000A special", "engine is special")
+	t.equal( car.engine.trim(), "600V 2000A special", "engine is special")
 	t.end()
 })
