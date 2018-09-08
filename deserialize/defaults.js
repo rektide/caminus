@@ -5,6 +5,7 @@ import readdir from "../fs/readdir.js"
 import isPrimitive from "./isPrimitive.js"
 import readPrimitive from "./readPrimitive.js"
 import resolveName from "./resolveName.js"
+import clean from "./clean.js"
 
 /**
  * Sealed copy of the default flyweight object
@@ -17,7 +18,8 @@ export const defaults= Object.freeze({
   readdir,
   arrayCheck: o=> o&& o.length!== undefined,
   resolveName,
-  deserialize
+  clean,
+  deserialize,
 
 /*
   writeOptions: {

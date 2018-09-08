@@ -3,10 +3,14 @@ import Deferrant from "deferrant/deferrant.js"
 
 let defaults
 
+function drop( key){
+	this[ key]= undefined
+}
+
 export async function deserialize( path, val, opts){
-	if( val&& !opts){
+	if( val&& opts=== undefined){
 		opts= val
-		val= null
+		val= undefined
 	}
 	if( !opts){
 		if( !defaults){
@@ -33,19 +37,31 @@ export async function deserialize( path, val, opts){
 		if( filename=== "@type"){
 			typeIndex= i
 		}
-		return opts.deserialize( path+ filename, undefined, opts)
+		if( dirtyKeys){
+			dirtyKeys.delete( keys[ i])
+		}
+		const current= hadVal? val[ keys[ i]]: undefined
+		return opts.deserialize( path+ filename, current, opts)
 	}
 	let typeIndex
 	const
+	  // map each filename to the key it'll have
 	  keys= files.map( opts.resolveName),
-	  _values= files.map( deserializer),
-	  values= await Promise.all( _values)
 
-	// marshal val into the right state start, now that we know @type
-	const
+	  hadVal= val!== undefined,
+	  hadKeys= hadVal&& opts.cleanup&& Object.keys( val),
+	  // as we iterate we're going to remote keys we see, leaving only dangling keys we need to clean-up
+	  dirtyKeys= hadKeys&& hadKeys.length&& new Set(...hadKeys),
+
+	  // deserialize each entry
+	  _values= files.map( deserializer),
+	  // wait for each entry's deserialization
+	  values= await Promise.all( _values),
+
+	  // marshal val into the right state start, now that we know @type
 	  type= typeIndex!== undefined&& values[ typeIndex],
 	  isArray= type&& type.trim()=== "@collection"
-	if( val=== undefined){
+	if( !hadVal){
 		if( isArray){
 			val= []
 		}else{
@@ -62,6 +78,12 @@ export async function deserialize( path, val, opts){
 				throw new Error("Expected `val` object")
 			}
 		}
+	}
+
+	// remove
+	if( dirtyKeys){
+		// these keys remain from the original `val`, but weren't seen during deser & thus need to be cleaned off
+		dirtyKeys.forEach( drop, val)
 	}
 
 	// read values
