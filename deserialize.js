@@ -25,12 +25,26 @@ export async function deserialize( path, val, opts){
 		return opts.readPrimitive( path)
 	}
 
-	// get top contents
+	// find contents of directory
 	const files= await opts.readdir( path)
 
-	// create our value
+	// resolve each piece of content
+	path= path+ sep
+	function deserializer( filename, i){
+		if( filename=== "@type"){
+			typeIndex= i
+		}
+		return opts.deserialize( path+ filename, undefined, opts)
+	}
+	let typeIndex
 	const
-	  type= files.indexOf("@type"),
+	  keys= files.map( opts.resolveName),
+	  _values= files.map( deserializer),
+	  values= await Promise.all( _values)
+
+	// marshal val into the right state start, now that we know @type
+	const
+	  type= typeIndex!== undefined&& _values[ typeIndex],
 	  isArray= type=== "@collection"
 	if( val=== undefined){
 		if( isArray){
@@ -51,17 +65,13 @@ export async function deserialize( path, val, opts){
 		}
 	}
 
-	path= path+ sep
-	async function deserializer( file){
-		const
-		  entry= opts.resolveName( file),
-		  childPath= path+ entry,
-		  child= await opts.deserialize( childPath, undefined, opts)
-		val[ entry]= child
+	// read values
+	for( let i= 0; i< keys.length; ++i){
+		const key= keys[ i]
+		val[ key]= values[ i]
 	}
-	const deserialized= files.map( deserializer)
-	await Promise.all( deserialized)
 
+	// good good
 	return val
 }
 export default deserialize
