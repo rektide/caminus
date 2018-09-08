@@ -9,7 +9,6 @@ if( config.cleanup){
 }
 
 export const tests= readdirSync(__dirname).filter( name=> name.endsWith(".js")&& name!== "index.js")
-//export const tests= [ "serialize.js"]
 
 const _tests= tests
 export function main(tests = _tests){
