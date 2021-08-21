@@ -1,10 +1,11 @@
 {
 	"name": "caminus",
+	"type": "module",
 	"version": "1.0.0",
 	"description": "Caminus JsonForge fires simple JS objects into a file system representation",
 	"main": "caminus.js",
 	"scripts": {
-		"test": "node -r esm .test"
+		"test": "node .test"
 	},
 	"repository": {
 		"type": "git",
@@ -19,17 +20,13 @@
 	"homepage": "https://archive.voodoowarez.com/caminus",
 	"module": "caminus.js",
 	"esm": true,
-	"@std/esm": {
-		"cjs": {
-			"namedExports": true
-		}
-	},
 	"devDependencies": {
-		"esm": "^3.1.1",
+		"desm": "^1.1.0",
 		"tape": "^4.9.1"
 	},
 	"dependencies": {
 		"deferrant": "^1.2.0",
-		"lodash.pullall": "^4.2.0"
+		"lodash.pullall": "^4.2.0",
+		"rimraf": "^3.0.2"
 	}
 }

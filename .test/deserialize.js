@@ -1,7 +1,7 @@
 import tape from "tape"
 
-import deserialize from "../deserialize"
-import { input} from "./util/config"
+import deserialize from "../deserialize.js"
+import { input} from "./util/config.js"
 
 tape( "deserialize car", async function(t){
 	const carDir= input+ "deserialize/car"

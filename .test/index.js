@@ -1,14 +1,16 @@
+import desm from "desm"
 import { readdirSync} from "fs"
-import {} from "./util/on-error"
-import {} from "./util/create-output-dir"
-import cleanup from "./util/cleanup"
-import config from "./util/config"
+
+import {} from "./util/on-error.js"
+import {} from "./util/create-output-dir.js"
+import cleanup from "./util/cleanup.js"
+import config from "./util/config.js"
 
 if( config.cleanup){
 	process.once( "beforeExit", cleanup)
 }
 
-export const tests= readdirSync(__dirname).filter( name=> name.endsWith(".js")&& name!== "index.js")
+export const tests= readdirSync( desm( import.meta.url)).filter( name=> name.endsWith(".js")&& name!== "index.js")
 
 const _tests= tests
 export function main(tests = _tests){

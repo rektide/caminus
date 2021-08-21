@@ -1,6 +1,6 @@
 import { mkdirSync} from "fs"
-import existsOk from "../../fs/existsOk"
-import { output} from "./config"
+import existsOk from "../../fs/existsOk.js"
+import { output} from "./config.js"
 
 try{
 	mkdirSync( output)

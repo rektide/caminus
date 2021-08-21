@@ -1,6 +1,6 @@
 import { sep} from "path"
-import readdir from "../../fs/readdir"
-import readFile from "../../fs/readFile"
+import readdir from "../../fs/readdir.js"
+import readFile from "../../fs/readFile.js"
 
 export async function readFiles( dir){
 	return readdir( dir).then( function(files){

@@ -2,13 +2,13 @@ import { sep} from "path"
 import tape from "tape"
 import { promisify} from "util"
 
-import mkdir from "../fs/mkdir"
-import rimraf from "../fs/rimraf"
-import { serialize} from "../serialize"
-import writeFile from "../fs/writeFile"
+import mkdir from "../fs/mkdir.js"
+import rimraf from "../fs/rimraf.js"
+import { serialize} from "../serialize.js"
+import writeFile from "../fs/writeFile.js"
 
-import { output} from "./util/config"
-import { readFiles} from "./util/fs"
+import { output} from "./util/config.js"
+import { readFiles} from "./util/fs.js"
 
 tape("serialize-object", async function(t){
 	// setup
