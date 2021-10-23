@@ -1,9 +1,9 @@
-import getDir from "../fs/getDir"
-import rimraf from "../fs/rimraf"
-import writeFile from "../fs/writeFile"
-import serialize from "../serialize"
+import getDir from "../fs/getDir.js"
+import rimraf from "../fs/rimraf.js"
+import writeFile from "../fs/writeFile.js"
+import serialize from "../serialize.js"
 
-import recordType from "./recordType"
+import recordType from "./recordType.js"
 
 /**
  * Sealed copy of the default flyweight object

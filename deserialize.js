@@ -12,7 +12,7 @@ export async function deserialize( path, val, opts){
 		if( !defaults){
 			// bit of a race if multiple callers get here but they
 			// ought all resolve the same module
-			defaults= (await import( "./deserialize/defaults")).default
+			defaults= (await import( "./deserialize/defaults.js")).default
 		}
 		opts= defaults()
 	}

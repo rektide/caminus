@@ -1,4 +1,4 @@
-import readFile from "../fs/readFile"
+import readFile from "../fs/readFile.js"
 
 export async function readPrimitive( path){
 	const

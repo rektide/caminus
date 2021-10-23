@@ -1,6 +1,6 @@
 import { sep } from "path"
 import pullAll from "lodash.pullall"
-import { mapInPlace} from "./util/collection"
+import { mapInPlace} from "./util/collection.js"
 
 /**
  * @name caminus
@@ -12,7 +12,7 @@ import { mapInPlace} from "./util/collection"
  */
 export async function serialize( dir, val, opts){
 	if( !opts){
-		const defaultsModule= await import( "./serialize/defaults")
+		const defaultsModule= await import( "./serialize/defaults.js")
 		opts= await defaultsModule.default()
 	}
 
