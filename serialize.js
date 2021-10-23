@@ -18,9 +18,18 @@ export async function serialize( dir, val, opts){
 
 	// if primitive,
 	const valType= typeof( val)
-	if( valType!== "object"){
+	if( valType=== "number"|| valType== "string"){
+		if( valType=== "number"){
+			val= val.toString()
+		}
+
 		// we just write the value, done
 		return opts.writePrimitive( dir, val, opts.writeOptions)
+	}else if( valType=== "function"){
+		if( opts.ignoreFunctions){
+			return
+		}
+		throw new Error("Unexpected function")
 	}
 	// else this is a complex object
 
